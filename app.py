@@ -11,7 +11,7 @@ CORS(app)  # Habilita o CORS para todas as rotas
 # Função para salvar os dados no arquivo JSON
 def salvar_no_json(dados):
     if os.path.exists('animes.json'):
-        with open('animes.json', 'r') as f:
+        with open('animes.json', 'r', encoding='utf-8') as f:
             animes = json.load(f)
     else:
         animes = []
@@ -20,8 +20,8 @@ def salvar_no_json(dados):
     animes.append(dados)
 
     # Salva novamente no arquivo JSON
-    with open('animes.json', 'w') as f:
-        json.dump(animes, f, indent=4)
+    with open('animes.json', 'w', encoding='utf-8') as f:
+        json.dump(animes, f, indent=4, ensure_ascii=False)
 
 # Endpoint para obter os animes do banco de dados
 @app.route('/animes', methods=['GET'])
@@ -72,3 +72,4 @@ def adicionar_anime():
 
 if __name__ == '__main__':
     app.run(debug=True)
+

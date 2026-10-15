@@ -36,9 +36,17 @@ CREATE TABLE IF NOT EXISTS avaliacoes (
 )
 ''')
 
-cursor.execute("INSERT INTO animes (titulo, genero, popularidade, imagem_url) VALUES ('Naruto', 'Ação', 95, 'https://wallpaperaccess.com/full/634467.jpg')")
-cursor.execute("INSERT INTO animes (titulo, genero, popularidade, imagem_url) VALUES ('One Piece', 'Aventura', 98, 'https://wallpaperaccess.com/full/1267584.jpg')")
-cursor.execute("INSERT INTO animes (titulo, genero, popularidade, imagem_url) VALUES ('Attack on Titan', 'Ação', 97, 'https://wallpaperaccess.com/full/354993.jpg')")
+# Insere os animes iniciais apenas se a tabela estiver vazia (evita duplicar ao rodar de novo)
+cursor.execute("SELECT COUNT(*) FROM animes")
+if cursor.fetchone()[0] == 0:
+    cursor.executemany(
+        "INSERT INTO animes (titulo, genero, popularidade, imagem_url) VALUES (?, ?, ?, ?)",
+        [
+            ('Naruto', 'Ação', 95, 'https://wallpaperaccess.com/full/634467.jpg'),
+            ('One Piece', 'Aventura', 98, 'https://wallpaperaccess.com/full/1267584.jpg'),
+            ('Attack on Titan', 'Ação', 97, 'https://wallpaperaccess.com/full/354993.jpg'),
+        ],
+    )
 
 conn.commit()
 conn.close()

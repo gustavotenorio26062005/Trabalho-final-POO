@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Form, Button, Card } from 'react-bootstrap';
+import { adicionarAnime } from '../services/api';
 
-const FormularioAnime = () => {
+const FormularioAnime = ({ onAnimeAdicionado }) => {
   const [titulo, setTitulo] = useState('');
   const [genero, setGenero] = useState('');
   const [popularidade, setPopularidade] = useState('');
@@ -17,25 +18,14 @@ const FormularioAnime = () => {
       imagem_url: imagemUrl 
     };
 
-    fetch('http://localhost:5000/animes', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(novoAnime),
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Erro ao adicionar o anime');
-        }
-        return response.json();
-      })
+    adicionarAnime(novoAnime)
       .then(data => {
         console.log('Anime adicionado:', data);
         setTitulo('');
         setGenero('');
         setPopularidade('');
         setImagemUrl('');
+        if (onAnimeAdicionado) onAnimeAdicionado();
       })
       .catch((error) => {
         console.error('Erro:', error);
@@ -52,6 +42,7 @@ const FormularioAnime = () => {
             <Form.Control
               type="text"
               placeholder="Digite o título do anime"
+              required
               value={titulo}
               onChange={(e) => setTitulo(e.target.value)}
             />
@@ -62,6 +53,7 @@ const FormularioAnime = () => {
             <Form.Control
               type="text"
               placeholder="Digite o gênero do anime"
+              required
               value={genero}
               onChange={(e) => setGenero(e.target.value)}
             />
@@ -72,6 +64,7 @@ const FormularioAnime = () => {
             <Form.Control
               type="number"
               placeholder="Digite a popularidade do anime"
+              required
               value={popularidade}
               onChange={(e) => setPopularidade(e.target.value)}
             />

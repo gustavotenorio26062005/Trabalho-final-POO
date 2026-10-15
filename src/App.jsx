@@ -1,12 +1,25 @@
-// App.jsx
-import React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ListaAnimes from './components/ListaAnimes';
 import FormularioAnime from './components/FormularioAnime';
 import CarrosselImagens from './components/CarrosselImagens';
-import Home from './components/home';  // Importa a nova página Home
+import Home from './components/home';
 import { Container, Navbar, Row, Col } from 'react-bootstrap';
+import { listarAnimes } from './services/api';
 
 function App() {
+  const [animes, setAnimes] = useState([]);
+
+  // Busca a lista uma única vez e compartilha com todos os componentes
+  const carregarAnimes = useCallback(() => {
+    listarAnimes()
+      .then(setAnimes)
+      .catch((error) => console.error('Erro ao buscar dados dos animes:', error));
+  }, []);
+
+  useEffect(() => {
+    carregarAnimes();
+  }, [carregarAnimes]);
+
   return (
     <div className="App">
       <Navbar bg="dark" variant="dark">
@@ -14,22 +27,21 @@ function App() {
           <Navbar.Brand href="#home">Site de Avaliação de Animes</Navbar.Brand>
         </Container>
       </Navbar>
-      
-      {/* A Home é renderizada aqui */}
-      <Home />  {/* Exibindo a página inicial */}
+
+      <Home animes={animes} />
 
       <Container className="mt-4">
         <Row>
           <Col>
-            <CarrosselImagens />
+            <CarrosselImagens animes={animes} />
           </Col>
         </Row>
         <Row className="mt-4">
           <Col md={6}>
-            <FormularioAnime />
+            <FormularioAnime onAnimeAdicionado={carregarAnimes} />
           </Col>
           <Col md={6}>
-            <ListaAnimes />
+            <ListaAnimes animes={animes} />
           </Col>
         </Row>
       </Container>
